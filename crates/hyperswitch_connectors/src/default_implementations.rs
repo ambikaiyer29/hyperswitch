@@ -86,6 +86,7 @@ macro_rules! default_imp_for_authorize_session_token {
 }
 
 default_imp_for_authorize_session_token!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -120,6 +121,7 @@ macro_rules! default_imp_for_complete_authorize {
 }
 
 default_imp_for_complete_authorize!(
+	connectors::Chaseorbital,
     connectors::Bitpay,
     connectors::Deutschebank,
     connectors::Fiserv,
@@ -151,6 +153,7 @@ macro_rules! default_imp_for_incremental_authorization {
 }
 
 default_imp_for_incremental_authorization!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -184,6 +187,7 @@ macro_rules! default_imp_for_create_customer {
 }
 
 default_imp_for_create_customer!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -218,6 +222,7 @@ macro_rules! default_imp_for_connector_redirect_response {
 }
 
 default_imp_for_connector_redirect_response!(
+	connectors::Chaseorbital,
     connectors::Bitpay,
     connectors::Deutschebank,
     connectors::Fiserv,
@@ -250,6 +255,7 @@ macro_rules! default_imp_for_pre_processing_steps{
 }
 
 default_imp_for_pre_processing_steps!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -283,6 +289,7 @@ macro_rules! default_imp_for_post_processing_steps{
 }
 
 default_imp_for_post_processing_steps!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -316,6 +323,7 @@ macro_rules! default_imp_for_approve {
 }
 
 default_imp_for_approve!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -349,6 +357,7 @@ macro_rules! default_imp_for_reject {
 }
 
 default_imp_for_reject!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -382,6 +391,7 @@ macro_rules! default_imp_for_webhook_source_verification {
 }
 
 default_imp_for_webhook_source_verification!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -416,6 +426,7 @@ macro_rules! default_imp_for_accept_dispute {
 }
 
 default_imp_for_accept_dispute!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -449,6 +460,7 @@ macro_rules! default_imp_for_submit_evidence {
 }
 
 default_imp_for_submit_evidence!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -482,6 +494,7 @@ macro_rules! default_imp_for_defend_dispute {
 }
 
 default_imp_for_defend_dispute!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -524,6 +537,7 @@ macro_rules! default_imp_for_file_upload {
 }
 
 default_imp_for_file_upload!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -559,6 +573,7 @@ macro_rules! default_imp_for_payouts_create {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_create!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -594,6 +609,7 @@ macro_rules! default_imp_for_payouts_retrieve {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_retrieve!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -629,6 +645,7 @@ macro_rules! default_imp_for_payouts_eligibility {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_eligibility!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -664,6 +681,7 @@ macro_rules! default_imp_for_payouts_fulfill {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_fulfill!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -699,6 +717,7 @@ macro_rules! default_imp_for_payouts_cancel {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_cancel!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -734,6 +753,7 @@ macro_rules! default_imp_for_payouts_quote {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_quote!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -769,6 +789,7 @@ macro_rules! default_imp_for_payouts_recipient {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_recipient!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -804,6 +825,7 @@ macro_rules! default_imp_for_payouts_recipient_account {
 
 #[cfg(feature = "payouts")]
 default_imp_for_payouts_recipient_account!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -839,6 +861,7 @@ macro_rules! default_imp_for_frm_sale {
 
 #[cfg(feature = "frm")]
 default_imp_for_frm_sale!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -874,6 +897,7 @@ macro_rules! default_imp_for_frm_checkout {
 
 #[cfg(feature = "frm")]
 default_imp_for_frm_checkout!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -909,6 +933,7 @@ macro_rules! default_imp_for_frm_transaction {
 
 #[cfg(feature = "frm")]
 default_imp_for_frm_transaction!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -944,6 +969,7 @@ macro_rules! default_imp_for_frm_fulfillment {
 
 #[cfg(feature = "frm")]
 default_imp_for_frm_fulfillment!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -979,6 +1005,7 @@ macro_rules! default_imp_for_frm_record_return {
 
 #[cfg(feature = "frm")]
 default_imp_for_frm_record_return!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,
@@ -1011,6 +1038,7 @@ macro_rules! default_imp_for_revoking_mandates {
 }
 
 default_imp_for_revoking_mandates!(
+	connectors::Chaseorbital,
     connectors::Bambora,
     connectors::Bitpay,
     connectors::Deutschebank,

@@ -342,6 +342,9 @@ impl ConnectorData {
                 enums::Connector::Cashtocode => {
                     Ok(ConnectorEnum::Old(Box::new(connector::Cashtocode::new())))
                 }
+                enums::Connector::Chaseorbital => {
+                    Ok(ConnectorEnum::Old(Box::new(connector::Chaseorbital::new())))
+                }
                 enums::Connector::Checkout => {
                     Ok(ConnectorEnum::Old(Box::new(connector::Checkout::new())))
                 }

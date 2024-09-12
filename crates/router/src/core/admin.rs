@@ -1314,6 +1314,10 @@ impl<'a> ConnectorAuthTypeAndMetadataValidation<'a> {
                 cashtocode::transformers::CashtocodeAuthType::try_from(self.auth_type)?;
                 Ok(())
             }
+            api_enums::Connector::Chaseorbital => {
+                chaseorbital::transformers::ChaseorbitalAuthType::try_from(self.auth_type)?;
+                Ok(())
+            }
             api_enums::Connector::Checkout => {
                 checkout::transformers::CheckoutAuthType::try_from(self.auth_type)?;
                 Ok(())

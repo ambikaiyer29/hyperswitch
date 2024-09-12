@@ -46,6 +46,7 @@ pub enum RoutingAlgorithm {
 #[serde(rename_all = "snake_case")]
 #[strum(serialize_all = "snake_case")]
 pub enum Connector {
+    Chaseorbital,
     // Novalnet,
     // Nexixpay,
     Adyenplatform,
@@ -213,6 +214,7 @@ impl Connector {
             | Self::DummyConnector7 => false,
             Self::Aci
             // Add Separate authentication support for connectors
+			| Self::Chaseorbital
 			// | Self::Novalnet
 			// | Self::Nexixpay
 			// | Self::Fiuu

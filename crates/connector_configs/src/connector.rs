@@ -161,6 +161,7 @@ pub struct ConnectorConfig {
     pub cashtocode: Option<ConnectorTomlConfig>,
     pub checkout: Option<ConnectorTomlConfig>,
     pub coinbase: Option<ConnectorTomlConfig>,
+    pub chaseorbital: Option<ConnectorTomlConfig>,
     pub cryptopay: Option<ConnectorTomlConfig>,
     pub cybersource: Option<ConnectorTomlConfig>,
     #[cfg(feature = "payouts")]
@@ -311,6 +312,7 @@ impl ConnectorConfig {
             Connector::Braintree => Ok(connector_data.braintree),
             Connector::Cashtocode => Ok(connector_data.cashtocode),
             Connector::Checkout => Ok(connector_data.checkout),
+            Connector::Chaseorbital => Ok(connector_data.chaseorbital),
             Connector::Coinbase => Ok(connector_data.coinbase),
             Connector::Cryptopay => Ok(connector_data.cryptopay),
             Connector::Cybersource => Ok(connector_data.cybersource),

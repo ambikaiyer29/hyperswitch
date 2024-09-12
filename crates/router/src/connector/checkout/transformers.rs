@@ -357,7 +357,6 @@ impl TryFrom<&CheckoutRouterData<&types::PaymentsAuthorizeRouterData>> for Payme
                     utils::get_unimplemented_payment_method_error_message("checkout"),
                 )),
             },
-
             domain::PaymentMethodData::PayLater(_)
             | domain::PaymentMethodData::BankRedirect(_)
             | domain::PaymentMethodData::BankDebit(_)

@@ -94,7 +94,8 @@ tunnel_private_key = ""
 
 [connectors.supported]
 wallets = ["klarna", "mifinity", "braintree", "applepay", "adyen"]
-rewards = ["cashtocode", "zen"]
+rewards = ["cashtocode",
+     "zen"]
 cards = [
     "aci",
     "adyen",
@@ -111,6 +112,7 @@ cards = [
     "braintree",
     "checkout",
     "coinbase",
+    "chaseorbital",
     "cryptopay",
     "cybersource",
     "datatrans",
@@ -205,6 +207,7 @@ bluesnap.secondary_base_url = "https://sandpay.bluesnap.com/"
 boku.base_url = "https://$-api4-stage.boku.com"
 braintree.base_url = "https://payments.sandbox.braintree-api.com/graphql"
 cashtocode.base_url = "https://cluster05.api-test.cashtocode.com"
+chaseorbital.base_url = "http://localhost:5151/"
 checkout.base_url = "https://api.sandbox.checkout.com/"
 coinbase.base_url = "https://api.commerce.coinbase.com"
 cryptopay.base_url = "https://business-sandbox.cryptopay.me"

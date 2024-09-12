@@ -112,6 +112,14 @@ pub trait ConnectorActions: Connector {
             },
             payment_info,
         );
+        let tx: oneshot::Sender<()> = oneshot::channel().0;
+        let state = routes::AppState::with_storage(
+            Settings::new().unwrap(),
+            StorageImpl::PostgresqlTest,
+            tx,
+            Box::new(services::MockApiClient),
+        )
+            .await;
         Box::pin(call_connector(request, integration)).await
     }
 

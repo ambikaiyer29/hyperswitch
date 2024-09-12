@@ -531,6 +531,7 @@ default_imp_for_connector_request_id!(
     connector::Boku,
     connector::Braintree,
     connector::Cashtocode,
+    connector::Chaseorbital,
     connector::Checkout,
     connector::Coinbase,
     connector::Cryptopay,
@@ -590,6 +591,7 @@ default_imp_for_connector_request_id!(
     connector::Worldline,
     connector::Worldpay,
     connector::Zen
+
 );
 
 macro_rules! default_imp_for_accept_dispute {
@@ -1166,6 +1168,7 @@ default_imp_for_payouts!(
     connector::Braintree,
     connector::Cashtocode,
     connector::Checkout,
+    connector::Chaseorbital,
     connector::Cryptopay,
     connector::Coinbase,
     connector::Datatrans,
@@ -2146,6 +2149,7 @@ default_imp_for_fraud_check!(
     connector::Boku,
     connector::Braintree,
     connector::Cashtocode,
+    connector::Chaseorbital,
     connector::Checkout,
     connector::Cryptopay,
     connector::Cybersource,
@@ -2938,6 +2942,7 @@ default_imp_for_connector_authentication!(
     connector::Boku,
     connector::Braintree,
     connector::Cashtocode,
+     connector::Chaseorbital,
     connector::Checkout,
     connector::Cryptopay,
     connector::Coinbase,
