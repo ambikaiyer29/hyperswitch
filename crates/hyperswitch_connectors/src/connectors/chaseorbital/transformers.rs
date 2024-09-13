@@ -1,5 +1,7 @@
+use error_stack::ResultExt;
 use common_enums::enums;
 use serde::{Deserialize, Serialize};
+use common_utils::ext_traits::{Encode, ValueExt};
 use masking::Secret;
 use common_utils::types::{StringMinorUnit};
 use hyperswitch_domain_models::{
@@ -10,13 +12,14 @@ use hyperswitch_domain_models::{
     router_response_types::{PaymentsResponseData, RefundsResponseData},
     types::{PaymentsAuthorizeRouterData, RefundsRouterData},
 };
+
 use hyperswitch_interfaces::errors;
-use crate::{
-    types::{RefundsResponseRouterData, ResponseRouterData},
-    utils::PaymentsAuthorizeRequestData,
-};
+use router_env::logger;
+use crate::{types::{RefundsResponseRouterData, ResponseRouterData}, utils, utils::PaymentsAuthorizeRequestData};
+use crate::utils::{CardData as cd, RouterData as rd};
 
 //TODO: Fill the struct with respective fields
+#[derive(Debug, Default, PartialEq, Clone)]
 pub struct ChaseorbitalRouterData<T> {
     pub amount: StringMinorUnit, // The type of amount that a connector accepts, for example, String, i64, f64, etc.
     pub router_data: T,
@@ -43,26 +46,87 @@ impl<T>
 }
 
 //TODO: Fill the struct with respective fields
-#[derive(Default, Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ChaseorbitalPaymentsRequest {
-    amount: StringMinorUnit,
-    // card: ChaseorbitalCard,
-    orbitalConnectionUserName: Secret<String>,
-    orbitalConnectionPassword: Secret<String>,
-    industryType: String,
-    messageType: String,
-    bin: String,
-    merchantID: Secret<String>,
-    terminalID: Secret<String>,
-    accountNum: String,
-    exp: String,
-    currencyCode: String,
-    currencyExponent: String,
-    avsZip:String,
-    avsAddress1: String,
-    orderId: String,
-    cardIndicators: String,
+    amount: Amount,
+    source: Source,
+    transaction_details: TransactionDetails,
+    merchant_details:  MerchantDetails,
+    transaction_interaction: TransactionInteraction,
+}
 
+#[derive(Debug, Serialize)]
+#[serde(tag = "sourceType")]
+pub enum Source {
+    PaymentCard {
+        card: CardData,
+    },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CardData {
+    card_data: cards::CardNumber,
+    expiration_month: Secret<String>,
+    expiration_year: Secret<String>,
+    security_code: Secret<String>,
+}
+
+#[derive(Default, Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GooglePayToken {
+    signature: Secret<String>,
+    signed_message: Secret<String>,
+    protocol_version: String,
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct Amount {
+    total: StringMinorUnit,
+    currency: String,
+}
+
+#[derive(Default, Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct TransactionDetails {
+    capture_flag: Option<bool>,
+    reversal_reason_code: Option<String>,
+    merchant_transaction_id: String,
+}
+
+#[derive(Default, Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct MerchantDetails {
+    merchant_id: Secret<String>,
+    terminal_id: Option<Secret<String>>,
+}
+
+#[derive(Default, Debug, Serialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct TransactionInteraction {
+    origin: TransactionInteractionOrigin,
+    eci_indicator: TransactionInteractionEciIndicator,
+    pos_condition_code: TransactionInteractionPosConditionCode,
+}
+
+#[derive(Default, Debug, Serialize, PartialEq)]
+#[serde(rename_all = "UPPERCASE")]
+pub enum TransactionInteractionOrigin {
+    #[default]
+    Ecom,
+}
+#[derive(Default, Debug, Serialize, PartialEq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TransactionInteractionEciIndicator {
+    #[default]
+    ChannelEncrypted,
+}
+#[derive(Default, Debug, Serialize, PartialEq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TransactionInteractionPosConditionCode {
+    #[default]
+    CardNotPresentEcom,
 }
 
 #[derive(Default, Debug, Serialize, Eq, PartialEq)]
@@ -74,54 +138,94 @@ pub struct ChaseorbitalCard {
     complete: bool,
 }
 
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct ChaseOrbitalSessionObject {
+    pub terminal_id: Secret<String>,
+}
+
 impl From<(&ChaseorbitalAuthType, &ChaseorbitalRouterData<&PaymentsAuthorizeRouterData>)> for ChaseorbitalPaymentsRequest {
     fn from((auth, req): (&ChaseorbitalAuthType, &ChaseorbitalRouterData<&PaymentsAuthorizeRouterData>)) -> Self {
-
-        let mut connector_req: ChaseorbitalPaymentsRequest = ChaseorbitalPaymentsRequest::try_from(req).expect("Failed to convert to ChaseorbitalPaymentsRequest");
-
-        connector_req.orbitalConnectionUserName = auth.orb_user_name.clone();
-        connector_req.orbitalConnectionPassword = auth.orb_password.clone();
-        connector_req.merchantID = auth.merchant_id.clone();
-
-        connector_req
+        ChaseorbitalPaymentsRequest::try_from(req).expect("Failed to convert to ChaseorbitalPaymentsRequest")
     }
 }
 impl TryFrom<&ChaseorbitalRouterData<&PaymentsAuthorizeRouterData>> for ChaseorbitalPaymentsRequest  {
     type Error = error_stack::Report<errors::ConnectorError>;
     fn try_from(item: &ChaseorbitalRouterData<&PaymentsAuthorizeRouterData>) -> Result<Self,Self::Error> {
-     let source_var =    match item.router_data.request.payment_method_data.clone() {
-            PaymentMethodData::Card(req_card) => {
 
-                let card = ChaseorbitalCard {
-                    number: req_card.card_number,
-                    expiry_month: req_card.card_exp_month,
-                    expiry_year: req_card.card_exp_year,
-                    cvc: req_card.card_cvc,
-                    complete: item.router_data.request.is_auto_capture()?,
+        let auth: ChaseorbitalAuthType = ChaseorbitalAuthType::try_from(&item.router_data.connector_auth_type)?;
+        let amount = Amount {
+            total: item.amount.clone(),
+            currency: item.router_data.request.currency.to_string(),
+        };
+        let transaction_details = TransactionDetails {
+            capture_flag: Some(matches!(
+                item.router_data.request.capture_method,
+                Some(enums::CaptureMethod::Automatic) | None
+            )),
+            reversal_reason_code: None,
+            merchant_transaction_id: item.router_data.connector_request_reference_id.clone(),
+        };
+        let metadata = "{\"terminal_id\" : \"001\"}".to_string(); //item.router_data.get_connector_meta()?;
+        println!("metadata: {:?}", &metadata);
+
+        let metadata = item.router_data.request.metadata.clone();
+        // let session: ChaseOrbitalSessionObject = metadata
+        //     .parse_value("ChaseOrbitalSessionObject")
+        //     .change_context(errors::ConnectorError::InvalidConnectorConfig {
+        //         config: "Merchant connector account metadata",
+        //     })?;
+
+        let merchant_details = MerchantDetails {
+            merchant_id: auth.merchant_id,
+            terminal_id: Some(Secret::new("session.terminal_id".to_string())),
+        };
+        let transaction_interaction = TransactionInteraction {
+            //Payment is being made in online mode, card not present
+            origin: TransactionInteractionOrigin::Ecom,
+            // transaction encryption such as SSL/TLS, but authentication was not performed
+            eci_indicator: TransactionInteractionEciIndicator::ChannelEncrypted,
+            //card not present in online transaction
+            pos_condition_code: TransactionInteractionPosConditionCode::CardNotPresentEcom,
+        };
+        let source = match item.router_data.request.payment_method_data.clone() {
+            PaymentMethodData::Card(ref ccard) => {
+                let card = CardData {
+                    card_data: ccard.card_number.clone(),
+                    expiration_month: ccard.card_exp_month.clone(),
+                    expiration_year: ccard.get_expiry_year_4_digit(),
+                    security_code: ccard.card_cvc.clone(),
                 };
-                Ok::<ChaseorbitalPaymentsRequest, Self::Error>(Self {
-                    amount: item.amount.clone(),
-                    orbitalConnectionUserName: Default::default(),
-                    orbitalConnectionPassword: Default::default(),
-                    industryType: "EC".to_string(),
-                    messageType: "AC".to_string(),
-                    bin: "000001".to_string(),
-                    merchantID: Secret::new("253997".to_string()),
-                    terminalID: Secret::new("001".to_string()),
-                    accountNum: "4000000000000002".to_string(),
-                    exp: "0624".to_string(),
-                    currencyCode: "124".to_string(),
-                    currencyExponent: "2".to_string(),
-                    avsZip: "94043".to_string(),
-                    avsAddress1: "Charleston Road".to_string(),
-                    orderId: "P-00000079".to_string(),
-                    cardIndicators: "Y".to_string(),
-                })
+                Source::PaymentCard { card }
             }
-            _ => Err(errors::ConnectorError::NotImplemented("Payment methods".to_string()).into()),
-        }?;
+            PaymentMethodData::Wallet(_)
+            | PaymentMethodData::PayLater(_)
+            | PaymentMethodData::BankRedirect(_)
+            | PaymentMethodData::BankDebit(_)
+            | PaymentMethodData::CardRedirect(_)
+            | PaymentMethodData::BankTransfer(_)
+            | PaymentMethodData::Crypto(_)
+            | PaymentMethodData::MandatePayment
+            | PaymentMethodData::Reward
+            | PaymentMethodData::RealTimePayment(_)
+            | PaymentMethodData::Upi(_)
+            | PaymentMethodData::Voucher(_)
+            | PaymentMethodData::GiftCard(_)
+            | PaymentMethodData::OpenBanking(_)
+            | PaymentMethodData::CardToken(_)
+            | PaymentMethodData::NetworkToken(_) => {
+                Err(errors::ConnectorError::NotImplemented(
+                    utils::get_unimplemented_payment_method_error_message("chaseorbital"),
+                ))
+            }?,
+        };
+        Ok(Self {
+            amount,
+            source,
+            transaction_details,
+            merchant_details,
+            transaction_interaction,
+        })
 
-        Ok(source_var)
     }
 }
 

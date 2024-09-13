@@ -234,10 +234,7 @@ impl
                 amount,
                 req,
             ));
-        let auth =  chaseorbital::ChaseorbitalAuthType::try_from(&req.connector_auth_type).expect("Failed to convert to ChaseorbitalAuthType");
-
-        let connector_req = chaseorbital::ChaseorbitalPaymentsRequest::from((&auth, &connector_router_data));
-        dbg!(&connector_req);
+        let connector_req = chaseorbital::ChaseorbitalPaymentsRequest::try_from((&connector_router_data))?;
         logger::debug!("connector_req: {:?}", &connector_req);
         println!("connector_req: {:?}", &connector_req);
         Ok(RequestContent::Json(Box::new(connector_req)))
